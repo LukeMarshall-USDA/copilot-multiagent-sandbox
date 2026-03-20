@@ -28,7 +28,7 @@ $ModelMap = @{
 $ErrorActionPreference = "Stop"
 $RepoRoot  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $SourceDir = Join-Path $RepoRoot "agent-templates"
-$TargetDir = Join-Path $RepoRoot ".github" "agents"
+$TargetDir = Join-Path (Join-Path $RepoRoot ".github") "agents"
 
 if (-not (Test-Path $SourceDir)) {
     Write-Host "ERROR: Source not found: $SourceDir" -ForegroundColor Red
