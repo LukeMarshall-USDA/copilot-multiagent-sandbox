@@ -48,6 +48,3 @@ Out of scope (for now):
 - Integrations with non-Copilot AI tools
 - Production deployment configurations
 
-## Code of Conduct
-
-Be professional, be kind, be constructive. This is a government pilot program — treat it accordingly.
