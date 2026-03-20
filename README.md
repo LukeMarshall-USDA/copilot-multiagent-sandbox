@@ -42,15 +42,41 @@ The main goal is to make agent collaboration repeatable across teams. The Seleni
 4. `Orchestrator` sends approved steps to `Coder` for implementation.
 5. `Orchestrator` reports what changed, how it was validated, and any remaining risks.
 
-## Model guidance (GPT/Gemini)
+## Model guidance (current best)
+
+As of March 2026, these are the best options from the currently available model set for this workflow.
+
+### Recommended per-agent defaults (quality first)
+
+- `Orchestrator`: `gpt 5.4`
+  - Best for cross-step reasoning, synthesis, and final handoff quality.
+- `Planner`: `gemini 3.1 pro (preview)`
+  - Strong planning and long-context organization for file-level implementation plans.
+- `Designer`: `gemini 2.5 pro`
+  - Strong at clarity, structure, and concise documentation/style refinements.
+- `Coder`: `gpt 5.3 codex`
+  - Best overall coding accuracy for targeted diffs and implementation-heavy tasks.
+
+### Balanced value profile (recommended for daily use)
+
+- `Orchestrator`: `gpt 5.2`
+- `Planner`: `gemini 2.5 pro`
+- `Designer`: `gpt 4.1`
+- `Coder`: `gpt 5.2 codex`
+
+### Fast/low-cost profile
+
+- `Orchestrator`: `gpt 5 mini`
+- `Planner`: `gemini 3 flash (preview)`
+- `Designer`: `gpt 4o`
+- `Coder`: `gpt 5.1 codex mini (preview)` or `grok code fast 1`
+
+### Practical notes
 
 - Keep all agents scoped to the current workspace.
 - Keep outputs concise and deterministic.
-- Suggested defaults:
-  - Orchestrator: GPT
-  - Planner: GPT or Gemini
-  - Designer: Gemini or GPT
-  - Coder: GPT
+- Use preview models for speed/experimentation; prefer non-preview models for high-stakes merges.
+- If you use one model for all roles, use `gpt 5.4` (quality) or `gpt 5.2` (balanced cost/performance).
 
 Agent files are available in:
 
