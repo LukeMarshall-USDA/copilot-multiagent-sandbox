@@ -44,10 +44,21 @@ The exact labels can vary by extension version, but the flow is typically:
 
 1. Open the Chat panel in VS Code.
 2. In the Chat input toolbar, open the agent selector (for example, `Agent`, `@`, or `Tools/Agents`).
-3. Choose **Create agent** (or **Add custom agent**).
-4. Point the agent to the corresponding role file in `docs/agents`.
-5. Repeat for all four roles: Orchestrator, Planner, Designer, Coder.
-6. Save and verify each agent appears in the selector list.
+3. Choose **Create new custom agent**.
+4. For **Location**, choose `.claude/agents` (repo-shared) or `User data` (local only).
+5. Create/select each role file in `.claude/agents`:
+	- `Orchestrator.agent.md`
+	- `Planner.agent.md`
+	- `Designer.agent.md`
+	- `Coder.agent.md`
+6. Set model/provider for each agent to GPT or Gemini (no Claude model required).
+7. Save and verify each agent appears in the selector list.
+
+Important:
+
+- The folder name `.claude/agents` is a file-location convention used by the tool UI.
+- It does **not** require Claude models; GPT and Gemini work with these same role files.
+- Avoid `.github/agents` in this repository due to organization push rules.
 
 Recommended default for daily use:
 
@@ -56,7 +67,7 @@ Recommended default for daily use:
 
 ### 1) Define role contracts
 
-Create one markdown file per role under `docs/agents`:
+Create one markdown file per role under `.claude/agents`:
 
 - `Orchestrator.agent.md`
 - `Planner.agent.md`
@@ -70,16 +81,26 @@ Each role file should include:
 - Expected output format
 - Escalation behavior for ambiguity/blockers
 
-This repo includes baseline versions in `docs/agents`.
+This repo includes baseline versions in both locations:
+
+- `.claude/agents` (used directly by agent-creation UI)
+- `docs/agents` (reference copy for docs/review)
 
 ### 1.1) Configure each agent profile
 
 For each created agent profile:
 
 - Name: match file name (`Orchestrator`, `Planner`, `Designer`, `Coder`).
-- Instructions source: corresponding markdown file under `docs/agents`.
+- Instructions source: corresponding markdown file under `.claude/agents`.
 - Scope: current workspace/repository only.
 - Behavior: concise, deterministic, and minimal-diff by default.
+
+Suggested model mapping (example):
+
+- Orchestrator: GPT (balanced reasoning)
+- Planner: GPT or Gemini (planning/structure)
+- Designer: Gemini or GPT (readability/conventions)
+- Coder: GPT (implementation + diffs)
 
 ### 2) Enforce delegation order
 
