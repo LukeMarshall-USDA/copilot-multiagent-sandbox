@@ -2,6 +2,12 @@
 
 Public, minimal Selenium + xUnit sandbox for validating browser automation patterns and multi-agent workflow specialization.
 
+## Status
+
+- Public-safe sandbox targets only (`example.com`, `iana.org`)
+- Single clean branch expected (`main`)
+- Headless + visual tests available
+
 ## Why this repo exists
 
 - Demonstrates a clean Selenium test harness in .NET.
@@ -27,6 +33,12 @@ Is this more effective than one agent with one prompt?
 
 - Usually yes for multi-step changes: better planning, traceability, and reviewability.
 - Usually no for very small one-step tasks where a single prompt is faster.
+
+## What reviewers can evaluate quickly
+
+- Test framework clarity: `Core` + `Pages` + `Tests` separation
+- Reliability pattern: popup fallback handling in headless/visual navigation tests
+- Extensibility: custom visual test attribute/discoverer/runner pipeline
 
 ## Prerequisites
 
@@ -83,4 +95,5 @@ SeleniumSandbox.Tests/
 
 - Keep targets public and non-sensitive.
 - Do not commit generated bin/obj artifacts.
+- Do not commit generated `artifacts/` or `TestResults/` folders.
 - Do not include internal endpoints, credentials, tokens, or organization-specific identifiers.

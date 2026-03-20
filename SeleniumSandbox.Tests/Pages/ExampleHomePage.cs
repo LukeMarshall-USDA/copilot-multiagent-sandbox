@@ -17,8 +17,6 @@ public class ExampleHomePage : BasePage
 
     public string ParagraphText => WaitFor(By.TagName("p")).Text;
 
-    public By MoreInformationLinkLocator => _moreInformationLinkLocator;
-
     public string MoreInformationHref => WaitFor(_moreInformationLinkLocator)
         .GetAttribute("href") ?? string.Empty;
 

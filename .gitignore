@@ -3,3 +3,5 @@ obj/
 .vscode/
 *.user
 *.suo
+artifacts/
+TestResults/
