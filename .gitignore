@@ -1,7 +1,27 @@
 bin/
 obj/
-.vscode/
-*.user
-*.suo
 artifacts/
 TestResults/
+
+# VS Code workspace settings (user-specific)
+.vscode/settings.json
+.vscode/launch.json
+
+# User/project files
+*.user
+*.suo
+
+# Test results
+*.trx
+
+# NuGet
+*.nupkg
+packages/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User secrets / local config
+appsettings.Development.json
+appsettings.Local.json
