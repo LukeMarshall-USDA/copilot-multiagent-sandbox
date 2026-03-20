@@ -1,75 +1,81 @@
 # Multiagent Sandbox
 
-This repository is a practical template for setting up a role-based multi-agent workflow.
-
-The main goal is to make agent collaboration repeatable across teams. The Selenium project in this repo is included only as a concrete example for planning, implementation, and validation.
+Practical template for role-based multi-agent execution in VS Code.
 
 ## What is included
 
-- Shared agent definitions for workspace use
-- A clear Orchestrator/Planner/Designer/Coder operating model
-- A runnable .NET test project used as a demonstration target
+- Shared agent definitions in `.claude/agents`
+- Orchestrator/Planner/Designer/Coder role split
+- A runnable Selenium + xUnit sample to validate the workflow
 
 ## Quick setup in VS Code
 
-1. Clone this repository.
-2. Open the repo in VS Code.
-3. Open Chat.
-4. Select `Create new custom agent`.
-5. Choose `.claude/agents` as the agent location.
-6. Add or select these files:
+1. Clone and open this repository in VS Code.
+2. Open Chat and select `Create new custom agent`.
+3. Choose `.claude/agents` as location.
+4. Add/select:
    - `Orchestrator.agent.md`
    - `Planner.agent.md`
    - `Designer.agent.md`
    - `Coder.agent.md`
-7. Assign each agent a GPT or Gemini model.
-8. Start with `Orchestrator` selected.
+5. Confirm each agent model (pre-filled from frontmatter, editable in UI).
+6. Start with `Orchestrator` selected.
 
 `.claude/agents` is just a folder convention for agent files. It does not require Claude models.
 
-## Agent roles
+Model assignment is now declared in `.agent.md` frontmatter via a `model:` field.
+Your chat client may still allow runtime override per agent/session.
 
-- `Orchestrator`: owns coordination and final handoff
-- `Planner`: produces ordered file-level plans and risk notes
-- `Designer`: advises on structure, readability, and conventions
-- `Coder`: implements scoped changes with minimal diffs
+## Agent roles (quick reference)
 
-## Recommended operating flow
+- `Orchestrator`: delegates, tracks progress, and delivers final handoff
+- `Planner`: produces ordered steps with file paths and risks
+- `Designer`: provides structure/readability guidance only when needed
+- `Coder`: implements approved scope with minimal diffs
 
-1. Prompt `Orchestrator` with the goal and constraints.
-2. `Orchestrator` gets a plan from `Planner`.
-3. `Orchestrator` consults `Designer` when structure/readability decisions are needed.
-4. `Orchestrator` sends approved steps to `Coder` for implementation.
-5. `Orchestrator` reports what changed, how it was validated, and any remaining risks.
+## Operating flow
 
-## Model guidance (current best)
+1. User prompts `Orchestrator` with goal + constraints.
+2. Orchestrator delegates automatically.
+3. Orchestrator returns: changes, validation, risks, and multi-agent benefit.
 
-As of March 2026, these are the best options from the currently available model set for this workflow.
+## Pilot exercise
 
-### Recommended per-agent defaults (quality first)
+Use this to verify that role delineation is visible and useful.
+
+1. Set the active agent to `Orchestrator`.
+2. Paste this prompt:
+
+```text
+Run the pilot exercise with max 1 file change and no refactor.
+During execution, post succinct progress lines each time an agent is used.
+Final output must clearly show each agent's role, what they did, and validation results.
+```
+
+3. Verify the chat output includes:
+
+- Per-agent progress lines as the run happens (Orchestrator/Planner/Designer-if-used/Coder)
+- A final summary with role-by-role contributions
+- Validation results (targeted test + full suite)
+- A short statement of why the multi-agent split improved the outcome
+
+## Model guidance
+
+Current recommendations (March 2026):
 
 - `Orchestrator`: `gpt 5.4`
-  - Best for cross-step reasoning, synthesis, and final handoff quality.
 - `Planner`: `gemini 3.1 pro (preview)`
-  - Strong planning and long-context organization for file-level implementation plans.
 - `Designer`: `gemini 2.5 pro`
-  - Strong at clarity, structure, and concise documentation/style refinements.
 - `Coder`: `gpt 5.3 codex`
-  - Best overall coding accuracy for targeted diffs and implementation-heavy tasks.
 
-### Balanced value profile (recommended for daily use)
+## Model frontmatter mapping
 
-- `Orchestrator`: `gpt 5.2`
-- `Planner`: `gemini 2.5 pro`
-- `Designer`: `gpt 4.1`
-- `Coder`: `gpt 5.2 codex`
+Current `.claude/agents` frontmatter values:
 
-### Fast/low-cost profile
-
-- `Orchestrator`: `gpt 5 mini`
-- `Planner`: `gemini 3 flash (preview)`
-- `Designer`: `gpt 4o`
-- `Coder`: `gpt 5.1 codex mini (preview)` or `grok code fast 1`
+- `Orchestrator.agent.md` → `GPT-5.4 (copilot)`
+- `Planner.agent.md` → `Gemini 3.1 Pro (preview) (google)`
+- `Designer.agent.md` → `Gemini 2.5 Pro (google)`
+- `Coder.agent.md` → `GPT-5.3 Codex (copilot)`
 
 ### Practical notes
 
@@ -78,12 +84,9 @@ As of March 2026, these are the best options from the currently available model 
 - Use preview models for speed/experimentation; prefer non-preview models for high-stakes merges.
 - If you use one model for all roles, use `gpt 5.4` (quality) or `gpt 5.2` (balanced cost/performance).
 
-Agent files are available in:
+Agent files: `.claude/agents` (single source of truth).
 
-- `.claude/agents` (primary runtime location)
-- `docs/agents` (reference copy)
-
-## Quality checklist
+## Quality checklist (before merge)
 
 - Work starts with `Orchestrator`
 - `Planner` provides a plan before code edits
@@ -93,7 +96,7 @@ Agent files are available in:
 
 ## Example project in this repo (secondary)
 
-The sample implementation uses Selenium + xUnit.
+The sample project uses Selenium + xUnit.
 
 ### Prerequisites
 

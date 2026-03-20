@@ -69,6 +69,9 @@ public class ExampleDotComVisualTests : VisualTestBase
             Driver.SwitchTo().Window(newWindowHandle);
         }
 
+        Assert.NotEqual(originalHandle, Driver.CurrentWindowHandle);
+        Assert.Contains("iana.org", Driver.Url);
+
         var reservedPage = new IanaReservedDomainsPage(Driver);
         Assert.Contains("Example Domains", reservedPage.HeadingText);
 
