@@ -6,7 +6,7 @@ Practical template for role-based multi-agent execution in VS Code.
 
 ## What is included
 
-- Shared agent definitions in `.claude/agents`
+- Shared agent definitions in `agent-templates`
 - Orchestrator/Planner/Designer/Coder role split
 - Setup script for per-agent model assignment
 - A runnable Selenium + xUnit sample to validate the workflow
@@ -33,9 +33,9 @@ Open Copilot Chat → switch to **Agent mode** → select **Orchestrator**. Done
 
 ## What the setup script does
 
-Copies agents from `.claude/agents/` to `.github/agents/` (VS Code default discovery path) and sets the recommended model per agent role. `.github/agents/` is gitignored and never pushed.
+Copies agents from `agent-templates/` to `.github/agents/` (VS Code default discovery path) and sets the recommended model per agent role. `.github/agents/` is gitignored and never pushed.
 
-- **`.claude/agents/`** — source of truth (committed to repo)
+- **`agent-templates/`** — source of truth (committed to repo)
 - **`.github/agents/`** — runtime agents with models applied (local only)
 
 ## Agent roles

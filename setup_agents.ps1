@@ -7,7 +7,7 @@
 
         .\setup_agents.ps1
 
-    Copies agents from .claude\agents\ to .github\agents\ (VS Code default
+    Copies agents from agent-templates\ to .github\agents\ (VS Code default
     discovery path) and rewrites the model: field per role.
 
     .github\agents\ is gitignored and never pushed.
@@ -27,7 +27,7 @@ $ModelMap = @{
 
 $ErrorActionPreference = "Stop"
 $RepoRoot  = Split-Path -Parent $MyInvocation.MyCommand.Path
-$SourceDir = Join-Path $RepoRoot ".claude" "agents"
+$SourceDir = Join-Path $RepoRoot "agent-templates"
 $TargetDir = Join-Path $RepoRoot ".github" "agents"
 
 if (-not (Test-Path $SourceDir)) {
