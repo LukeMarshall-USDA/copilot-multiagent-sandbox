@@ -13,15 +13,30 @@ Practical template for role-based multi-agent execution in VS Code.
 
 ## Quickstart
 
+Clone the repo and open a terminal in the repo folder:
+
 ```bash
 git clone https://github.com/LukeMarshall-USDA/copilot-multiagent-sandbox.git
 cd copilot-multiagent-sandbox
-python setup_agents.py
 ```
 
-Open in VS Code. Copilot Chat → Agent mode → select `Orchestrator`. Done.
+Run the setup script. In VS Code, open the terminal (`Ctrl + backtick`) and run:
 
-The setup script copies agents from `.claude/agents/` to `.github/agents/` (VS Code default path) and sets the recommended model per role. No settings changes needed.
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup_agents.ps1
+```
+
+> If you're already in a PowerShell terminal, you can just run `.\setup_agents.ps1`.
+> The `-ExecutionPolicy Bypass` flag is only needed if your machine restricts script execution.
+
+Open Copilot Chat → switch to **Agent mode** → select **Orchestrator**. Done.
+
+## What the setup script does
+
+Copies agents from `.claude/agents/` to `.github/agents/` (VS Code default discovery path) and sets the recommended model per agent role. `.github/agents/` is gitignored and never pushed.
+
+- **`.claude/agents/`** — source of truth (committed to repo)
+- **`.github/agents/`** — runtime agents with models applied (local only)
 
 ## Agent roles
 
@@ -52,7 +67,7 @@ Verify output includes per-agent progress lines, role-by-role summary, validatio
 
 ## Model assignments
 
-Default models set by `setup_agents.py` (March 2026):
+Default models set by `setup_agents.ps1` (March 2026):
 
 | Agent | Model | Rationale |
 |-------|-------|-----------|
@@ -61,18 +76,9 @@ Default models set by `setup_agents.py` (March 2026):
 | Designer | Gemini 2.5 Pro | Good pattern recognition |
 | Coder | GPT-5.3 Codex | Optimized for code gen |
 
-To change: edit `MODEL_MAP` in `setup_agents.py` and re-run.
+To change models: edit `$ModelMap` at the top of `setup_agents.ps1` and re-run the script.
 
 If you use one model for all roles: `GPT-5.4` (quality) or `GPT-5.2` (balanced).
-
-## How agent deployment works
-
-Agent source files live in `.claude/agents/` with `model: inherit`. The `.claude/` schema only accepts Claude model names, so per-agent model assignment happens locally.
-
-`setup_agents.py` copies agents to `.github/agents/` and rewrites the `model:` field per role. `.github/agents/` is gitignored — never pushed.
-
-- **`.claude/agents/`** — source of truth (committed)
-- **`.github/agents/`** — runtime agents with models applied (local only, gitignored)
 
 ## Quality checklist (before merge)
 
@@ -85,10 +91,13 @@ Agent source files live in `.claude/agents/` with `model: inherit`. The `.claude
 ## Troubleshooting
 
 **Agents don't appear in chat picker:**
-Run `python setup_agents.py` first. Confirm `.github/agents/` exists locally. Reload VS Code. Check `chat.agent.enabled` is `true`. Make sure you're in Agent mode, not Ask or Edit.
+Make sure you ran the setup script. Confirm `.github/agents/` exists in your local repo and has the four `.agent.md` files. Reload VS Code (`Ctrl+Shift+P` → "Reload Window"). Check `chat.agent.enabled` is `true` in settings. Make sure you're in Agent mode, not Ask or Edit.
+
+**Setup script won't run / "execution policy" error:**
+Use the full command: `powershell -ExecutionPolicy Bypass -File .\setup_agents.ps1`
 
 **All agents use the same model:**
-Check `MODEL_MAP` in `setup_agents.py`. Edit values to match your available models. Re-run the script. Reload VS Code.
+Check `$ModelMap` in `setup_agents.ps1`. Edit values to match your available models. Re-run the script. Reload VS Code.
 
 **Orchestrator doesn't hand off:**
 Verify `handoffs:` in Orchestrator frontmatter references correct agent names (no `.agent.md` extension). Confirm sub-agent files exist in `.github/agents/`.
@@ -114,6 +123,7 @@ dotnet test
 ```
 
 Test filters:
+
 ```bash
 dotnet test --filter "Mode=Headless"
 dotnet test --filter "Mode=Visual"
