@@ -2,7 +2,7 @@
 >
 > This repo is an active pilot exploring multi-agent workflows with GitHub Copilot in VS Code.
 > It works, but it's evolving fast. If you hit a snag, check the [Troubleshooting](#troubleshooting) section
-> or [open an issue](../../issues/new) — don't DM me on Teams.
+> or [open an issue](../../issues/new). (Or just ping me on teams, Marshall, Edward (CTR) - FPAC-FBC)
 
 # Multiagent Sandbox
 
