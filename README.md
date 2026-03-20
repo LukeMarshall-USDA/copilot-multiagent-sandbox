@@ -1,239 +1,103 @@
-# Selenium Sandbox
+# Multiagent Sandbox
 
-Public, minimal Selenium + xUnit sandbox for validating browser automation patterns and multi-agent workflow specialization.
+This repository is a practical template for setting up a role-based multi-agent workflow.
 
-## Status
+The main goal is to make agent collaboration repeatable across teams. The Selenium project in this repo is included only as a concrete example for planning, implementation, and validation.
 
-- Public-safe sandbox targets only (`example.com`, `iana.org`)
-- Single clean branch expected (`main`)
-- Headless + visual tests available
+## What is included
 
-## Why this repo exists
+- Shared agent definitions for workspace use
+- A clear Orchestrator/Planner/Designer/Coder operating model
+- A runnable .NET test project used as a demonstration target
 
-- Demonstrates a clean Selenium test harness in .NET.
-- Provides a safe sandbox with public example targets only (example.com and iana.org).
-- Shows role-based agent workflow boundaries (Planner, Designer, Coder, Orchestrator).
+## Quick setup in VS Code
 
-## Multi-agent workflow notes
+1. Clone this repository.
+2. Open the repo in VS Code.
+3. Open Chat.
+4. Select `Create new custom agent`.
+5. Choose `.claude/agents` as the agent location.
+6. Add or select these files:
+   - `Orchestrator.agent.md`
+   - `Planner.agent.md`
+   - `Designer.agent.md`
+   - `Coder.agent.md`
+7. Assign each agent a GPT or Gemini model.
+8. Start with `Orchestrator` selected.
 
-This repository is structured so each agent has a narrow responsibility:
+`.claude/agents` is just a folder convention for agent files. It does not require Claude models.
 
-- Planner: ordered implementation plan and risks.
-- Designer: conventions, readability, and DX guidance.
-- Coder: focused file changes with minimal diffs.
-- Orchestrator: coordinates flow and verification.
+## Agent roles
 
-Can each agent run a different model?
+- `Orchestrator`: owns coordination and final handoff
+- `Planner`: produces ordered file-level plans and risk notes
+- `Designer`: advises on structure, readability, and conventions
+- `Coder`: implements scoped changes with minimal diffs
 
-- Not from these markdown role files alone.
-- These files define role behavior.
-- Per-agent model routing depends on the host/orchestration platform configuration.
+## Recommended operating flow
 
-Is this more effective than one agent with one prompt?
+1. Prompt `Orchestrator` with the goal and constraints.
+2. `Orchestrator` gets a plan from `Planner`.
+3. `Orchestrator` consults `Designer` when structure/readability decisions are needed.
+4. `Orchestrator` sends approved steps to `Coder` for implementation.
+5. `Orchestrator` reports what changed, how it was validated, and any remaining risks.
 
-- Usually yes for multi-step changes: better planning, traceability, and reviewability.
-- Usually no for very small one-step tasks where a single prompt is faster.
+## Model guidance (GPT/Gemini)
 
-## Implementing the multi-agent delineation system
+- Keep all agents scoped to the current workspace.
+- Keep outputs concise and deterministic.
+- Suggested defaults:
+  - Orchestrator: GPT
+  - Planner: GPT or Gemini
+  - Designer: Gemini or GPT
+  - Coder: GPT
 
-Use this pattern to add role-specialized collaboration to a repository.
+Agent files are available in:
 
-### UI setup in chat (click-by-click)
+- `.claude/agents` (primary runtime location)
+- `docs/agents` (reference copy)
 
-The exact labels can vary by extension version, but the flow is typically:
+## Quality checklist
 
-1. Open the Chat panel in VS Code.
-2. In the Chat input toolbar, open the agent selector (for example, `Agent`, `@`, or `Tools/Agents`).
-3. Choose **Create new custom agent**.
-4. For **Location**, choose `.claude/agents` (repo-shared) or `User data` (local only).
-5. Create/select each role file in `.claude/agents`:
-	- `Orchestrator.agent.md`
-	- `Planner.agent.md`
-	- `Designer.agent.md`
-	- `Coder.agent.md`
-6. Set model/provider for each agent to GPT or Gemini (no Claude model required).
-7. Save and verify each agent appears in the selector list.
+- Work starts with `Orchestrator`
+- `Planner` provides a plan before code edits
+- `Coder` changes trace back to plan steps
+- Validation is run after implementation
+- Final handoff includes changes, validation, and risk notes
 
-Important:
+## Example project in this repo (secondary)
 
-- The folder name `.claude/agents` is a file-location convention used by the tool UI.
-- It does **not** require Claude models; GPT and Gemini work with these same role files.
-- Avoid `.github/agents` in this repository due to organization push rules.
+The sample implementation uses Selenium + xUnit.
 
-Recommended default for daily use:
-
-- Start conversations with **Orchestrator**.
-- Let Orchestrator delegate to Planner/Designer/Coder as needed.
-
-### 1) Define role contracts
-
-Create one markdown file per role under `.claude/agents`:
-
-- `Orchestrator.agent.md`
-- `Planner.agent.md`
-- `Designer.agent.md`
-- `Coder.agent.md`
-
-Each role file should include:
-
-- Scope and responsibilities
-- Hard constraints (what not to do)
-- Expected output format
-- Escalation behavior for ambiguity/blockers
-
-This repo includes baseline versions in both locations:
-
-- `.claude/agents` (used directly by agent-creation UI)
-- `docs/agents` (reference copy for docs/review)
-
-### 1.1) Configure each agent profile
-
-For each created agent profile:
-
-- Name: match file name (`Orchestrator`, `Planner`, `Designer`, `Coder`).
-- Instructions source: corresponding markdown file under `.claude/agents`.
-- Scope: current workspace/repository only.
-- Behavior: concise, deterministic, and minimal-diff by default.
-
-Suggested model mapping (example):
-
-- Orchestrator: GPT (balanced reasoning)
-- Planner: GPT or Gemini (planning/structure)
-- Designer: Gemini or GPT (readability/conventions)
-- Coder: GPT (implementation + diffs)
-
-### 2) Enforce delegation order
-
-For non-trivial work, use this sequence:
-
-1. Designer (optional) for conventions/readability impact
-2. Planner for file-level plan and risks
-3. Coder for implementation with minimal diffs
-4. Orchestrator for synthesis, verification, and handoff
-
-In practice, this means:
-
-- You ask Orchestrator for the task.
-- Orchestrator requests a plan from Planner.
-- Orchestrator requests optional structure/readability guidance from Designer.
-- Orchestrator requests code changes from Coder.
-- Orchestrator returns one consolidated result to you.
-
-### 3) Use a standard task lifecycle
-
-Apply the same lifecycle to every request:
-
-1. Intake: restate goal and constraints
-2. Plan: produce ordered steps with file paths
-3. Execute: implement scoped diffs only
-4. Validate: run focused tests, then broader tests
-5. Handoff: summarize changes, risks, and next actions
-
-### 4) Keep role boundaries strict
-
-- Planner should not implement code.
-- Coder should not redesign architecture unless explicitly requested.
-- Orchestrator should resolve conflicts between recommendations and keep scope tight.
-
-### 4.1) Make agents reference each other explicitly
-
-To avoid drift, include explicit handoff references in prompts and outputs:
-
-- Planner output should reference expected Coder inputs (files + steps).
-- Coder output should map changes back to Planner step numbers.
-- Orchestrator output should summarize Designer guidance and Planner/Coder traceability.
-
-Simple prompt pattern for Orchestrator:
-
-1. "Ask Planner for an ordered implementation plan with file paths."
-2. "Ask Designer only if naming/structure/readability is impacted."
-3. "Ask Coder to implement only approved plan steps with minimal diffs."
-4. "Return one consolidated summary with verification results."
-
-### 5) Add quality gates
-
-Before merge/push, require:
-
-- Passing tests
-- No internal URLs/secrets/PII
-- Minimal, reviewable diffs
-- Clear commit message and PR summary
-
-### 6) Decide model routing strategy
-
-Role files define behavior, not model selection. If your platform supports model routing, map roles to models based on task type (for example: planning-focused model for Planner, code-focused model for Coder). If your platform does not support routing, use one model with strict role prompts.
-
-## Multi-agent effectiveness checklist
-
-Use this quick checklist to confirm the system is working well:
-
-- Work starts with Orchestrator, not directly with Coder.
-- Planner provides file-level steps before code is changed.
-- Designer is used only when structure/readability conventions matter.
-- Coder changes are minimal and traceable to the approved plan.
-- Validation is run after implementation and reported back.
-- Final summary includes what changed, how verified, and remaining risks.
-
-## What reviewers can evaluate quickly
-
-- Test framework clarity: `Core` + `Pages` + `Tests` separation
-- Reliability pattern: popup fallback handling in headless/visual navigation tests
-- Extensibility: custom visual test attribute/discoverer/runner pipeline
-
-## Prerequisites
+### Prerequisites
 
 - .NET 10 SDK
 - Chrome browser
 
-## Quick start
-
-Build:
+### Build and test
 
 ```bash
 dotnet build
-```
-
-Run all tests:
-
-```bash
 dotnet test
 ```
 
-## Test filters
+### Useful test filters
 
 ```bash
-# Headless tests
 dotnet test --filter "Mode=Headless"
-
-# Visual tests
 dotnet test --filter "Mode=Visual"
-
-# Smoke tests
 dotnet test --filter "Category=Smoke"
-
-# Visual smoke tests
 dotnet test --filter "Category=Smoke&Mode=Visual"
 ```
 
-Headless smoke tests validate Example Domain content and navigation to IANA Example Domains.
-
-Visual test failures save screenshots to:
+Visual failures save screenshots to:
 
 ```text
 artifacts/screenshots/visual/{yyyyMMdd}/{TestClass}/{TestMethod}__{HHmmssfff}.png
 ```
 
-## Project structure
+## Public sharing guardrails
 
-SeleniumSandbox.Tests/
-├── Core/            Framework infrastructure (DriverFactory, WaitHelper, BasePage)
-├── Pages/           Page Object Model classes
-├── Tests/           Headless and visual test classes
-└── VisualTesting/   Visual test attribute, discoverer, runner, and base class
-
-## Public-sharing guardrails
-
-- Keep targets public and non-sensitive.
-- Do not commit generated bin/obj artifacts.
-- Do not commit generated `artifacts/` or `TestResults/` folders.
-- Do not include internal endpoints, credentials, tokens, or organization-specific identifiers.
+- Keep targets public and non-sensitive
+- Do not commit generated `bin/`, `obj/`, `artifacts/`, or `TestResults/` folders
+- Do not include internal endpoints, credentials, tokens, or organization-specific identifiers
