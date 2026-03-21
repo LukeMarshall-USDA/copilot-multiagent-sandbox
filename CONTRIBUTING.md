@@ -25,12 +25,12 @@ When filing an issue, include:
 
 ### Modifying agent definitions
 
-Agent files live in `.claude/agents/`. If you're editing an agent:
+Committed agent templates live in `agent-templates/`. If you're editing an agent:
 
 - Preserve the YAML frontmatter structure (`name`, `description`, `model`, `tools`, `handoffs`).
-- Test that the agent appears in the VS Code chat picker after your change.
+- Run `setup_agents.ps1` to generate the local runtime agents into `.github/agents/`.
+- Test that the generated agent appears in the VS Code chat picker after your change.
 - If adding a new tool to an agent's `tools:` list, verify the tool is available in your Copilot setup.
-- Update `docs/agents/` reference copies if they exist.
 
 ### Code style
 
@@ -47,4 +47,3 @@ Out of scope (for now):
 - Adding entirely new demo projects beyond the Selenium xUnit target
 - Integrations with non-Copilot AI tools
 - Production deployment configurations
-

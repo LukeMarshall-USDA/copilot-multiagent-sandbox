@@ -1,144 +1,114 @@
-> **Early Sandbox — expect rough edges.** If something breaks, [open an issue](../../issues/new). Or ping me directly via MS teams - Marshall, Edward (CTR) - FPAC-FBC
-
 # Multiagent Sandbox
 
-Practical template for role-based multi-agent execution in VS Code.
+Practical VS Code sandbox for role-based GitHub Copilot workflows, with committed agent templates and a small Selenium + xUnit demo project.
 
-## What is included
+## Repository structure
 
-- Shared agent definitions in `agent-templates`
-- Orchestrator/Planner/Designer/Coder role split
-- Setup script for per-agent model assignment
-- A runnable Selenium + xUnit sample to validate the workflow
+```text
+.
+├── agent-templates/         # Committed source-of-truth agent definitions
+├── setup_agents.ps1         # Generates local runtime agents and applies model mappings
+├── SeleniumSandbox.sln      # Solution entry point for the demo project
+├── SeleniumSandbox.Tests/
+│   ├── Core/                # Driver factory, waits, base page
+│   ├── Pages/               # Page objects
+│   ├── Tests/               # Example xUnit tests
+│   └── VisualTesting/       # Visual test helpers and runners
+├── README.md                # Onboarding
+└── CONTRIBUTING.md          # Contribution workflow and issue guidance
+```
 
-## Quickstart
+## Prerequisites
 
-Clone the repo and open a terminal in the repo folder:
+- VS Code with GitHub Copilot Chat
+- PowerShell
+- .NET 10 SDK and Chrome if you want to run the Selenium demo
+
+## Setup agents
+
+Clone the repo and open it in VS Code:
 
 ```bash
 git clone https://github.com/LukeMarshall-USDA/copilot-multiagent-sandbox.git
 cd copilot-multiagent-sandbox
 ```
 
-Run the setup script. In VS Code, open the terminal (`Ctrl + backtick`) and run:
+Run the setup script:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\setup_agents.ps1
 ```
 
-> If you're already in a PowerShell terminal, you can just run `.\setup_agents.ps1`.
-> The `-ExecutionPolicy Bypass` flag is only needed if your machine restricts script execution.
+The script:
 
-Open Copilot Chat → switch to **Agent mode** → select **Orchestrator**. Done.
+- copies agent templates from `agent-templates/`
+- generates local runtime agents in `.github/agents/`
+- applies the model map defined in `setup_agents.ps1`
+If agents do not appear after setup, reload VS Code.
 
-## What the setup script does
+This has been a little buggy for some reason. If you see issues with "model: " frontmatter in the agent.md files, do the following:
 
-Copies agents from `agent-templates/` to `.github/agents/` (VS Code default discovery path) and sets the recommended model per agent role. `.github/agents/` is gitignored and never pushed.
+    - Delete entry from model: "model: GPT-5.3-Codex (copilot)" -> "model: "
+    - Next to now empty colon in "model: ", begin typing the letter "G"
+    - Dropdown list of available agents will appear, select the correct model for the agent
 
-- **`agent-templates/`** — source of truth (committed to repo)
-- **`.github/agents/`** — runtime agents with models applied (local only)
 
-## Agent roles
+## First run in VS Code
 
-| Agent | Role | Invoked By |
-|-------|------|------------|
-| **Orchestrator** | Coordinates workflow, delegates, verifies output | You |
-| **Planner** | Produces step-by-step plan with file paths and risks | Orchestrator |
-| **Designer** | Structure/readability guidance when needed | Orchestrator |
-| **Coder** | Implements approved scope with minimal diffs | Orchestrator |
+1. Open Copilot Chat.
+2. Switch to Agent mode.
+3. Select `Orchestrator`.
 
-## Operating flow
+Expected flow:
 
-1. User prompts `Orchestrator` with goal + constraints.
-2. Orchestrator delegates automatically.
-3. Orchestrator returns: changes, validation, risks, and multi-agent benefit.
+- `Orchestrator` coordinates the task and verifies the result.
+- `Planner` proposes the implementation plan.
+- `Designer` reviews structure and conventions when needed.
+- `Coder` makes the approved change.
 
 ## Pilot exercise
 
-Set active agent to `Orchestrator` and paste:
+Use this prompt for a first end-to-end run:
 
 ```text
-Run the pilot exercise with max 1 file change and no refactor.
-During execution, post succinct progress lines each time an agent is used.
-Final output must clearly show each agent's role, what they did, and validation results.
+Act as Orchestrator. Run a small end-to-end exercise in this repo with a one-file limit and no refactor. Have Planner produce a short plan first, use Designer only if needed, then have Coder make the smallest valid improvement. Finish with validation results and any remaining risk.
 ```
 
-Verify output includes per-agent progress lines, role-by-role summary, validation results, and a statement of why the multi-agent split improved the outcome.
+A good result should show:
 
-## Model assignments
+- a scoped plan before edits
+- a bounded change in one file
+- validation after implementation
+- a short note on remaining risk or follow-up
 
-Default models set by `setup_agents.ps1` (March 2026):
+## Selenium demo project
 
-| Agent | Model | Rationale |
-|-------|-------|-----------|
-| Orchestrator | GPT-5.4 | Best reasoning for coordination |
-| Planner | Gemini 3.1 Pro (preview) | Strong structured analysis |
-| Designer | Gemini 2.5 Pro | Good pattern recognition |
-| Coder | GPT-5.3 Codex | Optimized for code gen |
+This repo includes a small Selenium + xUnit project as a validation target.
 
-To change models: edit `$ModelMap` at the top of `setup_agents.ps1` and re-run the script.
-
-If you use one model for all roles: `GPT-5.4` (quality) or `GPT-5.2` (balanced).
-
-## Quality checklist (before merge)
-
-- Work starts with `Orchestrator`
-- `Planner` provides a plan before code edits
-- `Coder` changes trace back to plan steps
-- Validation is run after implementation
-- Final handoff includes changes, validation, and risk notes
-
-## Troubleshooting
-
-**Agents don't appear in chat picker:**
-Make sure you ran the setup script. Confirm `.github/agents/` exists in your local repo and has the four `.agent.md` files. Reload VS Code (`Ctrl+Shift+P` → "Reload Window"). Check `chat.agent.enabled` is `true` in settings. Make sure you're in Agent mode, not Ask or Edit.
-
-**Setup script won't run / "execution policy" error:**
-Use the full command: `powershell -ExecutionPolicy Bypass -File .\setup_agents.ps1`
-
-**All agents use the same model:**
-Check `$ModelMap` in `setup_agents.ps1`. Edit values to match your available models. Re-run the script. Reload VS Code.
-
-**Orchestrator doesn't hand off:**
-Verify `handoffs:` in Orchestrator frontmatter references correct agent names (no `.agent.md` extension). Confirm sub-agent files exist in `.github/agents/`.
-
-**Tool not available warnings:**
-Agent can only use tools in its `tools:` frontmatter. Add the missing tool to the list.
-
-**Selenium build/test failures:**
-The xUnit project is a demo target. Needs .NET 10 SDK, Chrome, and `dotnet restore`. Not an agent issue.
-
-**Org-level agent distribution:**
-```json
-{ "github.copilot.chat.organizationCustomAgents.enabled": true }
-```
-
-## Example project (secondary)
-
-Selenium + xUnit demo. Requires .NET 10 SDK and Chrome.
-
-```bash
+```powershell
 dotnet build
 dotnet test
 ```
 
-Test filters:
+## Troubleshooting
 
-```bash
-dotnet test --filter "Mode=Headless"
-dotnet test --filter "Mode=Visual"
-dotnet test --filter "Category=Smoke"
-dotnet test --filter "Category=Smoke&Mode=Visual"
-```
+**Agents do not appear**
 
-Visual failures save screenshots to `artifacts/screenshots/visual/{yyyyMMdd}/{TestClass}/{TestMethod}__{HHmmssfff}.png`
+- Re-run `setup_agents.ps1`
+- Confirm `.github/agents/` exists
+- Reload VS Code
+- Make sure Copilot Chat is in Agent mode
+
+**Script is blocked by execution policy**
+
+- Use `powershell -ExecutionPolicy Bypass -File .\setup_agents.ps1`
+
+**Need different model assignments**
+
+- Edit `$ModelMap` in `setup_agents.ps1`
+- Re-run the setup script
+- OR: refer to instructions above -> open agent.md files, delete entry for "model:", type the letter 'G' to trigger dropdown list, and select the correct model.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Public sharing guardrails
-
-- Keep targets public and non-sensitive
-- Do not commit `bin/`, `obj/`, `artifacts/`, or `TestResults/`
-- Do not include internal endpoints, credentials, tokens, or org-specific identifiers
+See [CONTRIBUTING.md](CONTRIBUTING.md). If you hit a bug or workflow issue, open an issue instead of contacting maintainers directly.
