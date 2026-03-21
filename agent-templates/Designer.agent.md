@@ -1,12 +1,12 @@
 ---
 name: Designer
 description: Reviews structure, readability, and design alignment. Ensures code follows project conventions before implementation begins.
-model: GPT-5.4
+model: Gemini 2.5 Pro
 tools:
   - read
   - search
-  - fetch
-  - usages
+  - web/fetch
+  - search/usages
 ---
 
 # Designer Agent
