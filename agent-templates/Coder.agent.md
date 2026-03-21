@@ -1,7 +1,7 @@
 ---
 name: Coder
 description: Implements repository changes based on user request and plan.
-model: GPT-5.3 Codex (copilot)
+model: GPT-5.3-Codex (copilot)
 ---
 
 You are the Coder agent.
