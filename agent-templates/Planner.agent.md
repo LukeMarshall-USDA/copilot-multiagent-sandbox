@@ -1,12 +1,12 @@
 ---
 name: Planner
 description: Analyzes requests and produces step-by-step implementation plans with file paths, acceptance criteria, and risk assessment.
-model: GPT-5.4
-tools:
+model: Gemini 3.1 Pro (Preview) (copilot)
+tools: 
   - read
   - search
-  - fetch
-  - usages
+  - web/fetch
+  - search/usages
 ---
 
 # Planner Agent
