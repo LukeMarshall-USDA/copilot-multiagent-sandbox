@@ -8,19 +8,19 @@ tools:
   - search
 handoffs:
   - label: Plan Implementation
-    agent: planner
+    agent: Planner
     prompt: >
       Analyze the request and produce a step-by-step implementation plan.
       Include file paths, acceptance criteria, and any risks or open questions.
     send: false
   - label: Review Design
-    agent: designer
+    agent: Designer
     prompt: >
       Review the proposed design for correctness, maintainability, and
       alignment with project conventions. Flag any concerns.
     send: false
   - label: Implement Code
-    agent: coder
+    agent: Coder
     prompt: >
       Implement the plan. Follow the design guidance provided. Write clean,
       tested code that passes existing CI checks.
